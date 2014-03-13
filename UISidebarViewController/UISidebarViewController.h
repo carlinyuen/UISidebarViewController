@@ -22,6 +22,10 @@
 
 @interface UISidebarViewController : UIViewController
 
+    /** UIViewControllers to manipulate */
+    @property (nonatomic, strong, readonly) UIViewController *centerVC;
+    @property (nonatomic, strong, readonly) UIViewController *sidebarVC;
+
     /** Direction in which the sidebar should come from */
     @property (nonatomic, assign) UISidebarViewControllerDirection direction;
 

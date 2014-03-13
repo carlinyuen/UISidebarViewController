@@ -10,8 +10,15 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-    #define TIME_ANIMATION_DURATION 0.2
+    /** Get Device OS version */
+	#define getDeviceOSVersionString() ([[UIDevice currentDevice] systemVersion])
+    #define deviceOSVersionEqualTo(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
+    #define deviceOSVersionGreaterThan(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
+    #define deviceOSVersionLessThan(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+    #define iOS7 @"7.0"
 
+    /** Default Preferences */
+    #define TIME_ANIMATION_DURATION 0.2
     #define SIZE_DEFAULT_SIDEBAR_WIDTH 270
 
 @interface UISidebarViewController () <
@@ -19,8 +26,8 @@
 >
 
     /** UIViewControllers to manipulate */
-    @property (nonatomic, strong) UIViewController *centerVC;
-    @property (nonatomic, strong) UIViewController *sidebarVC;
+    @property (nonatomic, strong, readwrite) UIViewController *centerVC;
+    @property (nonatomic, strong, readwrite) UIViewController *sidebarVC;
 
     /** For detecting pan gesture for sidebar */
     @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
