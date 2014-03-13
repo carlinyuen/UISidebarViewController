@@ -22,9 +22,10 @@
     UIViewController *navVC = [[UINavigationController alloc] initWithRootViewController:newVC];
 
     UISidebarViewController *sidebarVC = [[UISidebarViewController alloc]
-        initWithCenterViewController:navVC
-//        initWithCenterViewController:newVC
+//        initWithCenterViewController:navVC
+        initWithCenterViewController:newVC
         andSidebarViewController:nil];
+//    sidebarVC.direction = UISidebarViewControllerDirectionRight;
 
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 8, 64, 44)];
     [button setTitle:@"MENU" forState:UIControlStateNormal];
