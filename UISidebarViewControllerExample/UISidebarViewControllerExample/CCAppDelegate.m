@@ -26,7 +26,7 @@
 //        initWithCenterViewController:newVC
         andSidebarViewController:nil];
 
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 64, 44)];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 8, 64, 44)];
     [button setTitle:@"MENU" forState:UIControlStateNormal];
     [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [button addTarget:sidebarVC action:@selector(toggleSidebar:) forControlEvents:UIControlEventTouchUpInside];
