@@ -35,6 +35,9 @@
     /** Width for sidebar to slide to */
     @property (nonatomic, assign) CGFloat sidebarWidth;
 
+    /** Opacity of the black overlay on center view when sidebar is out */
+    @property (nonatomic, assign) CGFloat overlayOpacity;
+
     /** Custom animation and completion blocks for showing and hiding the sidebar */
     @property (nonatomic, copy) AnimationBlock showSidebarAnimation;
     @property (nonatomic, copy) AnimationCompletionBlock showSidebarCompletion;

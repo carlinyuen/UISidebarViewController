@@ -10,16 +10,25 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-    /** Get Device OS version */
-	#define getDeviceOSVersionString() ([[UIDevice currentDevice] systemVersion])
-    #define deviceOSVersionEqualTo(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
-    #define deviceOSVersionGreaterThan(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
-    #define deviceOSVersionLessThan(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-    #define iOS7 @"7.0"
-
     /** Default Preferences */
     #define TIME_ANIMATION_DURATION 0.2
     #define SIZE_DEFAULT_SIDEBAR_WIDTH 270
+    #define SIZE_PAN_FROM_EDGE_MARGIN 44
+    #define ALPHA_OVERLAY 0.5
+
+@interface UITouchPassingView : UIView
+    @property (nonatomic, weak) UIView *targetView; // View to pass touches to
+@end
+@implementation UITouchPassingView
+// If hitTest returns the container, then return targetView instead
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+	UIView *child = nil;
+    if ((child = [super hitTest:point withEvent:event]) == self && self.targetView) {
+    	return self.targetView;
+	}
+    return child;
+}
+@end
 
 @interface UISidebarViewController () <
     UIGestureRecognizerDelegate
@@ -29,8 +38,12 @@
     @property (nonatomic, strong, readwrite) UIViewController *centerVC;
     @property (nonatomic, strong, readwrite) UIViewController *sidebarVC;
 
+    /** Overlay over the center view to darken it up and pass touches */
+    @property (nonatomic, strong) UITouchPassingView *overlayView;
+
     /** For detecting pan gesture for sidebar */
-    @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+    @property (nonatomic, strong) UIPanGestureRecognizer *openSidebarPanGesture;
+    @property (nonatomic, strong) UIPanGestureRecognizer *closeSidebarPanGesture;
 
     /** For detecting tap on center when sidebar is showing */
     @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
@@ -56,6 +69,7 @@
         _direction = UISidebarViewControllerDirectionLeft;
         _animationDuration = TIME_ANIMATION_DURATION;
         _sidebarWidth = SIZE_DEFAULT_SIDEBAR_WIDTH;
+        _overlayOpacity = ALPHA_OVERLAY;
         _sidebarIsShowing = false;
     }
     return self;
@@ -69,18 +83,24 @@
     self.view.backgroundColor = [UIColor clearColor];
 
     // Setup
+    [self setupOverlayView];
     [self setupCenterView];
     [self setupSidebarView];
     [self setupGestures];
 
-    // Attach pan gesture to center view
-    [self.centerVC.view addGestureRecognizer:self.panGesture];
+    // Attach gestures
+    [self.centerVC.view addGestureRecognizer:self.openSidebarPanGesture];
+    [self.overlayView addGestureRecognizer:self.closeSidebarPanGesture];
+    [self.overlayView addGestureRecognizer:self.tapGesture];
 }
 
 /** This may be called when coming back from background */
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
+    // Update bounds of overlay in case screen has changed
+    self.overlayView.frame = self.view.bounds;
 
     // Tell view controllers that they will appear
     [[self centerVC] viewWillAppear:animated];
@@ -91,8 +111,11 @@
 {
     // Update bounds of sidebar and center view
     CGRect sFrame = self.sidebarVC.view.frame;
-    CGRect cFrame = self.centerVC.view.frame;
     CGRect bounds = self.view.bounds;
+
+    // Set overlay and center to match view bounds
+    self.overlayView.frame = bounds;
+    self.centerVC.view.frame = bounds;
    
     // Special case if sidebar is showing
     if (self.sidebarIsShowing)
@@ -117,7 +140,6 @@
             CGRectGetHeight(sFrame)
         );
     }
-    self.centerVC.view.frame = bounds;
 }
 
 - (void)didReceiveMemoryWarning
@@ -133,6 +155,14 @@
 
 
 #pragma mark - Setup
+
+- (void)setupOverlayView
+{
+    self.overlayView = [UITouchPassingView new];
+    self.overlayView.frame = self.view.bounds;
+    self.overlayView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:ALPHA_OVERLAY];
+    self.overlayView.alpha = 0; // Start invisible so we can fade in
+}
 
 - (void)setupCenterView
 {
@@ -178,28 +208,23 @@
     [self.sidebarVC didMoveToParentViewController:self];
 }
 
-/** @brief Creates and sets up a whole new gesture recognizer and attaches it to the centerVC view */
+/** @brief Creates and sets up a whole new gesture recognizer and attaches it to the given view */
 - (void)setupGestures
 {
-    // Regular UIPanGestureRecognizer for < iOS 7
-    if (deviceOSVersionLessThan(iOS7)) {
-        self.panGesture = [[UIPanGestureRecognizer alloc]
-            initWithTarget:self action:@selector(sidebarPanned:)];
-    }
-    else    // UIScreenEdgePanGestureRecognizer
-    {
-        UIScreenEdgePanGestureRecognizer *edgePan = [[UIScreenEdgePanGestureRecognizer alloc]
-            initWithTarget:self action:@selector(viewPanned:)];
-        edgePan.edges = UIRectEdgeLeft | UIRectEdgeRight;
-        self.panGesture = edgePan;
-    }
+    // Open sidebar gesture
+    self.openSidebarPanGesture = [[UIPanGestureRecognizer alloc]
+        initWithTarget:self action:@selector(viewPanned:)];
+    [self.openSidebarPanGesture setMinimumNumberOfTouches:1];
+    [self.openSidebarPanGesture setMaximumNumberOfTouches:1];
+    [self.openSidebarPanGesture setDelegate:self];
 
-    // Configure rest of the gesture
-    [self.panGesture setMinimumNumberOfTouches:1];
-    [self.panGesture setMaximumNumberOfTouches:1];
-    [self.panGesture setDelegate:self];
+    // Close sidebar gesture
+    self.closeSidebarPanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(viewPanned:)];
+    [self.closeSidebarPanGesture setMinimumNumberOfTouches:1];
+    [self.closeSidebarPanGesture setMaximumNumberOfTouches:1];
+    [self.closeSidebarPanGesture setDelegate:self];
 
-    // Tap gesture - don't add to center view till sidebar is shown
+    // Tap gesture
     self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
 }
 
@@ -211,7 +236,12 @@
 {
     [self.view bringSubviewToFront:self.sidebarVC.view];
 
-    // Prevent retain cycles
+    // Update overlay color
+    if (show) {
+        self.overlayView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:ALPHA_OVERLAY];
+    }
+
+    // Setup target frame and animations and callbacks
     CGRect targetFrame = self.sidebarVC.view.frame;
     if (show)   // Showing sidebar
     {
@@ -227,6 +257,9 @@
         if (!completion) {
             completion = self.showSidebarCompletion;
         }
+
+        // Add overlayview
+        [self.view insertSubview:self.overlayView belowSubview:self.sidebarVC.view];
     }
     else    // Hiding sidebar
     {
@@ -242,18 +275,16 @@
         if (!completion) {
             completion = self.hideSidebarCompletion;
         }
-
-        // Remove tap gesture from center view
-        [self.centerVC.view removeGestureRecognizer:self.tapGesture];
     }
 
     // Animate with custom options
-    __block UISidebarViewController *this = self;
+    __block UISidebarViewController *this = self; // Prevent retain cycles
     self.sidebarIsShowing = show;
     [UIView animateWithDuration:self.animationDuration delay:0
         options:UIViewAnimationOptionBeginFromCurrentState
             | UIViewAnimationOptionCurveEaseInOut
         animations:^{
+            [[this overlayView] setAlpha:show];
             if (animations) {
                 animations(targetFrame);    // Call custom animations if given
             } else {
@@ -262,9 +293,8 @@
         }
         completion:^(BOOL finished) {
             if (finished) {
-                if (show) {
-                    // Add tap gesture to dismiss view
-                    [[[this centerVC] view] addGestureRecognizer:[this tapGesture]];
+                if (!show) {
+                    [[this overlayView] removeFromSuperview];
                 }
             }
             if (completion) {
@@ -286,14 +316,49 @@
 - (void)viewPanned:(UIPanGestureRecognizer *)gesture
 {
     CGPoint translatedPoint = [gesture translationInView:self.view];
-    CGPoint velocity = [gesture velocityInView:[gesture view]];
+    CGPoint velocity = [gesture velocityInView:gesture.view];
+    debugLog(@"viewPanned: %@, %@", NSStringFromCGPoint(translatedPoint), NSStringFromCGPoint(velocity));
+
+    // Need this to speed things up a bit, stop animations
+    // [gesture.view.layer removeAllAnimations];
+    
+    // Panning - move sidebar along
+    if (gesture.state == UIGestureRecognizerStateChanged)
+    {
+        // Figure out whether to show or hide if the user let go now
+        self.sidebarIsShowing = (velocity.x > 0);
+
+        // Allow dragging only in x-coordinates by only updating the x-coordinate with translation position.
+        self.sidebarVC.view.center = CGPointMake(
+            self.sidebarVC.view.center.x + translatedPoint.x,
+            self.sidebarVC.view.center.y
+        );
+        [gesture setTranslation:CGPointMake(0,0) inView:self.view];
+    }
+
+    // Panning starting - if opening sidebar, check view order
+    if (gesture.state == UIGestureRecognizerStateBegan
+        && gesture == self.openSidebarPanGesture)
+    {
+        // Make sure view order is correct
+        [self.view bringSubviewToFront:self.sidebarVC.view];
+        [self.view insertSubview:self.overlayView belowSubview:self.sidebarVC.view];
+        [self.view sendSubviewToBack:self.centerVC.view];
+    }
+
+    // Panning ended - animate to intended state
+    if (gesture.state == UIGestureRecognizerStateEnded)
+    {
+        // Animate to show / hide sidebar
+        [self displaySidebar:self.sidebarIsShowing animations:nil completion:nil];
+    }
 }
 
 /** @brief Tap gesture recognized */
 - (void)viewTapped:(UITapGestureRecognizer *)gesture
 {
-    // This should only happen on the centerVC view, when the sidebar is shown
-    if (gesture.view == self.centerVC.view && self.sidebarIsShowing) {
+    // This should only happen on the overlayView view, when the sidebar is shown
+    if (gesture.view == self.overlayView && self.sidebarIsShowing) {
         [self displaySidebar:false animations:nil completion:nil];
     }
     else {  // Weird state, notify user
@@ -307,6 +372,20 @@
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
+    // If this recognizer is the opening sidebar gesture
+    if (gestureRecognizer == self.openSidebarPanGesture)
+    {
+        // Figure out if it's starting from the right edge or not
+        CGPoint startingPoint = [gestureRecognizer locationInView:self.view];
+        if ((self.direction == UISidebarViewControllerDirectionLeft
+                && startingPoint.x <= SIZE_PAN_FROM_EDGE_MARGIN)
+            || (self.direction == UISidebarViewControllerDirectionRight
+                && startingPoint.x >= CGRectGetWidth(self.view.bounds) - SIZE_PAN_FROM_EDGE_MARGIN)) {
+            return true;
+        }
+        return false;
+    }
+
     return true;
 }
 
