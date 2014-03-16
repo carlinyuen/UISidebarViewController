@@ -109,37 +109,15 @@
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    // Update bounds of sidebar and center view
-    CGRect sFrame = self.sidebarVC.view.frame;
+    // Reference bounds to view
     CGRect bounds = self.view.bounds;
 
     // Set overlay and center to match view bounds
     self.overlayView.frame = bounds;
     self.centerVC.view.frame = bounds;
-   
-    // Special case if sidebar is showing
-    if (self.sidebarIsShowing)
-    {
-        self.sidebarVC.view.frame = CGRectMake(
-            (self.direction == UISidebarViewControllerDirectionLeft
-                ? -CGRectGetWidth(sFrame) + self.sidebarWidth
-                : CGRectGetWidth(bounds) - self.sidebarWidth),
-            0,
-            CGRectGetWidth(sFrame),
-            CGRectGetHeight(sFrame)
-        );
-    }
-    else    // Not showing, just shift over (frames already rotated!)
-    {
-        self.sidebarVC.view.frame = CGRectMake(
-            (self.direction == UISidebarViewControllerDirectionLeft
-                ? -CGRectGetWidth(sFrame)
-                : CGRectGetWidth(bounds)),
-            0,
-            CGRectGetWidth(sFrame),
-            CGRectGetHeight(sFrame)
-        );
-    }
+
+    // Force show / hide sidebar to clear weird states
+    [self displaySidebar:self.sidebarIsShowing animations:nil completion:nil];
 }
 
 - (void)didReceiveMemoryWarning
