@@ -295,11 +295,7 @@
 {
     CGPoint translatedPoint = [gesture translationInView:self.view];
     CGPoint velocity = [gesture velocityInView:gesture.view];
-    debugLog(@"viewPanned: %@, %@", NSStringFromCGPoint(translatedPoint), NSStringFromCGPoint(velocity));
 
-    // Need this to speed things up a bit, stop animations
-    // [gesture.view.layer removeAllAnimations];
-    
     // Panning - move sidebar along
     if (gesture.state == UIGestureRecognizerStateChanged)
     {
