@@ -174,8 +174,8 @@
     // Create sidebarVC if does not exist
     if (!self.sidebarVC)
     {
-        self.sidebarVC = [UIViewController new];
-        self.sidebarVC.view.backgroundColor = [[UIColor darkGrayColor] colorWithAlphaComponent:0.5];
+        self.sidebarVC = [UITableViewController new];
+        self.sidebarVC.view.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
         self.sidebarVC.view.frame = self.view.bounds;
     }
 

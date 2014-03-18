@@ -5,6 +5,9 @@ Simplest darn iOS sidebar menu implementation ever. Clean, simple, sidebar panel
 
 Keywords: Xcode, ios, sidebar, menu, hamburger, panel, simple.
 
+![](/images/screenshot1.png "Closed")
+![](/images/screenshot1.png "Opened")
+
 ## Setup
 Super easy setup!
 
@@ -63,8 +66,8 @@ Extra properties that you can configure:
 
 Properties you can check:
 
- - `@property (nonatomic, assign, readonly) BOOL sidebarIsShowing;` to see if
-		the sidebar is being or in the process of being shown.
+ - `@property (nonatomic, assign, readonly) BOOL sidebarIsShowing;` 
+		to see if the sidebar is being or in the process of being shown.
  - `@property (nonatomic, strong, readonly) UIViewController *centerVC;`
 		a reference to the center view controller directly.
  - `@property (nonatomic, strong, readonly) UIViewController *sidebarVC;`

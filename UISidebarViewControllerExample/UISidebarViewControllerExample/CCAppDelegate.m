@@ -22,8 +22,8 @@
     UIViewController *navVC = [[UINavigationController alloc] initWithRootViewController:newVC];
 
     UISidebarViewController *sidebarVC = [[UISidebarViewController alloc]
-//        initWithCenterViewController:navVC
-        initWithCenterViewController:newVC
+        initWithCenterViewController:navVC
+//        initWithCenterViewController:newVC
         andSidebarViewController:nil];
 //    sidebarVC.direction = UISidebarViewControllerDirectionRight;
 
