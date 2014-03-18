@@ -63,11 +63,11 @@ Extra properties that you can configure:
 
 Properties you can check:
 
-	- `@property (nonatomic, assign, readonly) BOOL sidebarIsShowing;` to see if
+ - `@property (nonatomic, assign, readonly) BOOL sidebarIsShowing;` to see if
 		the sidebar is being or in the process of being shown.
-	- `@property (nonatomic, strong, readonly) UIViewController *centerVC;`
+ - `@property (nonatomic, strong, readonly) UIViewController *centerVC;`
 		a reference to the center view controller directly.
-	- `@property (nonatomic, strong, readonly) UIViewController *sidebarVC;`
+ - `@property (nonatomic, strong, readonly) UIViewController *sidebarVC;`
 		a reference to the sidebar view controller directly.
 
 
