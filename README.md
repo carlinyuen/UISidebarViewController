@@ -6,8 +6,10 @@ Supports iOS 6 and 7. NOTE: sidebar appears OVER the main center view.
 
 Keywords: Xcode, ios, sidebar, menu, hamburger, panel, simple.
 
-![](/images/screenshot1.png "Sidebar Closed")
-![](/images/screenshot2.png "Sidebar Opened")
+![Vertical Closed](/images/vertical1.png)
+![Vertical Opened](/images/vertical2.png)
+![Horizontal Closed](/images/horizontal1.png)
+![Horizontal Opened](/images/horizontal2.png)
 
 ## Setup
 Super easy setup!
