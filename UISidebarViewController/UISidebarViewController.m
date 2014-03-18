@@ -43,6 +43,9 @@
     @property (nonatomic, strong, readwrite) UIViewController *centerVC;
     @property (nonatomic, strong, readwrite) UIViewController *sidebarVC;
 
+    /** Keep track of original frame of sidebar before orientation changes */
+    @property (nonatomic, assign) CGRect sidebarFrame;
+
     /** Overlay over the center view to darken it up and pass touches */
     @property (nonatomic, strong) UITouchPassingView *overlayView;
 
@@ -113,6 +116,13 @@
     [[self sidebarVC] viewWillAppear:animated];
 }
 
+/** Setup code for rotation */
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    self.sidebarFrame = self.sidebarVC.view.frame;
+}
+
+/** This code will be called during animation of rotation */
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     // Reference bounds to view
@@ -121,6 +131,9 @@
     // Set overlay and center to match view bounds
     self.overlayView.frame = bounds;
     self.centerVC.view.frame = bounds;
+
+    // Reset sidebar frame to what it was before rotation
+    self.sidebarVC.view.frame = self.sidebarFrame;
 
     // Force show / hide sidebar to clear weird states
     [self displaySidebar:self.sidebarIsShowing animations:nil completion:nil];
