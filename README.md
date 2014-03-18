@@ -5,7 +5,7 @@ Simplest darn iOS sidebar menu implementation ever. Clean, simple, sidebar panel
 
 Keywords: Xcode, ios, sidebar, menu, hamburger, panel, simple.
 
-### Setup
+## Setup
 Super easy setup!
 
  1. Add UISidebarViewController.h/.m files in your project (or just drag the
@@ -14,9 +14,8 @@ Super easy setup!
 		AppDelegate.
  3. Create the view controllers for your center view and sidebar view.
  4. Create and initialize the UISidebarViewController with the center and
-		sidebar view controllers, that's it!
- 5. Bonus: observe for notifications on sidebar showing / hiding, or set custom
-		showing / closing animations.
+		sidebar view controllers. You're done!
+ 5. Bonus: customize sidebar, observe for notifications on sidebar showing / hiding, or set custom showing / closing animations.
 
 		#import "UISidebarViewController.h"`
 
@@ -38,6 +37,18 @@ Super easy setup!
 			[self.window makeKeyAndVisible];
 			return YES;
 		}
+
+### Config
+Extra properties that you can configure:
+
+ - `/** Direction in which the sidebar should come from */
+    @property (nonatomic, assign) UISidebarViewControllerDirection direction;`
+ - `/** Duration of slide animation when displaySidebar is called */
+    @property (nonatomic, assign) CGFloat animationDuration;`
+ - `/** Width for sidebar to slide to */
+    @property (nonatomic, assign) CGFloat sidebarWidth;`
+ - `/** Opacity of the black overlay on center view when sidebar is out */
+    @property (nonatomic, assign) CGFloat overlayOpacity;`
 
 ### Notifications
 There are four notifications that are fired when the sidebar is about to be
