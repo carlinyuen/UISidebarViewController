@@ -14,7 +14,7 @@ Super easy setup!
 		AppDelegate.
  3. Create the view controllers for your center view and sidebar view.
  4. Create and initialize the UISidebarViewController with the center and
-		sidebar view controllers, and you're done!
+		sidebar view controllers, that's it!
  5. Bonus: observe for notifications on sidebar showing / hiding, or set custom
 		showing / closing animations.
 
@@ -22,6 +22,8 @@ Super easy setup!
 
 		- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 		{
+			self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+
 			// Create base view controller
 			UIViewController *rootVC = [[UIViewController alloc] initWithNibName:@"RootView" bundle:nil];
 
