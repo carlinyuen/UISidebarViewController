@@ -5,8 +5,8 @@ Simplest darn iOS sidebar menu implementation ever. Clean, simple, sidebar panel
 
 Keywords: Xcode, ios, sidebar, menu, hamburger, panel, simple.
 
-![](/images/screenshot1.png "Closed")
-![](/images/screenshot1.png "Opened")
+![](/images/screenshot1.png "Sidebar Closed")
+![](/images/screenshot2.png "Sidebar Opened")
 
 ## Setup
 Super easy setup!
