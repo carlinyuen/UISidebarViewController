@@ -45,13 +45,19 @@ Extra properties that you can configure:
  
 		/** Direction in which the sidebar should come from */
 		@property (nonatomic, assign) UISidebarViewControllerDirection direction;
+
  - 
+
 		/** Duration of slide animation when displaySidebar is called */
 		@property (nonatomic, assign) CGFloat animationDuration;
+
  - 
+
 		/** Width for sidebar to slide to */
 		@property (nonatomic, assign) CGFloat sidebarWidth;
+
  - 
+
 		/** Opacity of the black overlay on center view when sidebar is out */
 		@property (nonatomic, assign) CGFloat overlayOpacity;
 
