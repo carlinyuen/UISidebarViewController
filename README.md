@@ -1,7 +1,8 @@
 UISidebarViewController
 =======================
 
-Simplest darn iOS sidebar menu implementation ever. Clean, simple, sidebar panel from left or right, works with rotations, can supply basic custom animations. Supports iOS 6 and 7.
+Simplest darn iOS sidebar menu implementation ever. Clean, simple, sidebar panel from left or right, works with rotations, can supply basic custom animations. 
+Supports iOS 6 and 7. NOTE: sidebar appears OVER the main center view.
 
 Keywords: Xcode, ios, sidebar, menu, hamburger, panel, simple.
 
