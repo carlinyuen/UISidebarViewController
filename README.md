@@ -18,24 +18,24 @@ Super easy setup!
  5. Bonus: observe for notifications on sidebar showing / hiding, or set custom
 		showing / closing animations.
 
-	#import "UISidebarViewController.h"
+		#import "UISidebarViewController.h"`
 
-	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-	{
-		// Create base view controller
-		UIViewController *rootVC = [[UIViewController alloc] initWithNibName:@"RootView" bundle:nil];
+		- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+		{
+			// Create base view controller
+			UIViewController *rootVC = [[UIViewController alloc] initWithNibName:@"RootView" bundle:nil];
 
-		// Create menu sidebar controller
-		UITableViewController *menuVC = [[UITableViewController alloc] initWithNibName:@"MenuView" bundle:nil];
+			// Create menu sidebar controller
+			UITableViewController *menuVC = [[UITableViewController alloc] initWithNibName:@"MenuView" bundle:nil];
 
-		self.viewController = [[UISidebarViewController alloc]
-				initWithCenterViewController:rootVC
-				andSidebarViewController:menuVC];
-		self.window.rootViewController = self.viewController;
+			self.viewController = [[UISidebarViewController alloc]
+					initWithCenterViewController:rootVC
+					andSidebarViewController:menuVC];
+			self.window.rootViewController = self.viewController;
 
-		[self.window makeKeyAndVisible];
-		return YES;
-	}
+			[self.window makeKeyAndVisible];
+			return YES;
+		}
 
 ### Notifications
 There are four notifications that are fired when the sidebar is about to be
