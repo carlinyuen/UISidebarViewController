@@ -14,6 +14,12 @@
         UISidebarViewControllerDirectionRight,
     } UISidebarViewControllerDirection;
 
+    /** Notification names for when sidebar is about to be shown / hidden */
+    extern NSString * const UISidebarViewControllerNotificationDidShow;
+    extern NSString * const UISidebarViewControllerNotificationWillShow;
+    extern NSString * const UISidebarViewControllerNotificationWillHide;
+    extern NSString * const UISidebarViewControllerNotificationDidHide;
+
     /** Custom animation block type, targetFrame is calculated target frame location for sidebar */
     typedef void (^AnimationBlock)(CGRect targetFrame);
 
@@ -22,8 +28,10 @@
 
 @interface UISidebarViewController : UIViewController
 
-    /** UIViewControllers to manipulate */
+    /** Center view controller whose view will be used as the base to slide the sidebar over. Note that the centerVC's view frame will be managed by the SidebarViewController for rotations and such, and may be resized to fit the SidebarViewController's view.bounds */
     @property (nonatomic, strong, readonly) UIViewController *centerVC;
+
+    /** The sidebar viewcontroller to be displayed and slid over the centerVC view. This view's frame will not be resized and will only have its origin modified to provide sliding left and right smoothly based on the width of the sidebar view and the SidebarViewController's view.bounds */
     @property (nonatomic, strong, readonly) UIViewController *sidebarVC;
 
     /** Direction in which the sidebar should come from */

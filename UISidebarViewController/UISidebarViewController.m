@@ -10,6 +10,11 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+    NSString * const UISidebarViewControllerNotificationDidShow = @"sidebarDidShow";
+    NSString * const UISidebarViewControllerNotificationWillShow = @"sidebarWillShow";
+    NSString * const UISidebarViewControllerNotificationWillHide = @"sidebarWillHide";
+    NSString * const UISidebarViewControllerNotificationDidHide = @"sidebarDidHide";
+
     /** Default Preferences */
     #define TIME_ANIMATION_DURATION 0.2
     #define SIZE_DEFAULT_SIDEBAR_WIDTH 270
@@ -99,8 +104,9 @@
 {
     [super viewWillAppear:animated];
 
-    // Update bounds of overlay in case screen has changed
+    // Update bounds in case screen has changed
     self.overlayView.frame = self.view.bounds;
+    self.centerVC.view.frame = self.view.bounds;
 
     // Tell view controllers that they will appear
     [[self centerVC] viewWillAppear:animated];
@@ -254,6 +260,13 @@
             completion = self.hideSidebarCompletion;
         }
     }
+       
+    // Send notification that view will be shown / hidden
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:(show
+            ? UISidebarViewControllerNotificationWillShow
+            : UISidebarViewControllerNotificationWillHide
+        ) object:self userInfo:nil];
 
     // Animate with custom options
     __block UISidebarViewController *this = self; // Prevent retain cycles
@@ -270,10 +283,19 @@
             }
         }
         completion:^(BOOL finished) {
-            if (finished) {
+            if (finished)
+            {
+                // Remove overlay if animation finished
                 if (!show) {
                     [[this overlayView] removeFromSuperview];
                 }
+                       
+                // Send notification that view was shown / hidden
+                [[NSNotificationCenter defaultCenter]
+                    postNotificationName:(show
+                        ? UISidebarViewControllerNotificationDidShow
+                        : UISidebarViewControllerNotificationDidHide
+                    ) object:self userInfo:nil];
             }
             if (completion) {
                 completion(finished);       // Call custom completion if given
