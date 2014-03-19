@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.author             = { ". Carlin" => "email.me@carlinyuen.com" }
   s.platform     = :ios, '6.0'
-  s.source       = { :git => "https://github.com/carlinyuen/UISidebarViewController.git", :tag => 'v1.0' }
+  s.source       = { :git => "https://github.com/carlinyuen/UISidebarViewController.git", :tag => 'v1.0.0' }
   s.requires_arc = true
   s.source_files = 'UISidebarViewController/*'
   
